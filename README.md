@@ -13,6 +13,8 @@ ___________      .__                   ._____________
 
 Please accept the following submission for the FriendBuy interview round.
 
+The `diyOnicConverter` function queries for a matching selector. If found, it loops over each `<p>` tag contained within it. It uses a recursive function, `processNode`, to process any child nodes (text, element) in order to preserve non-text nodes (ie: links, images). Once all elements have been processed, the paragraph's content is replaced with the newly formatted (Bionic) text.
+
 The code can be executed by calling the `diyOnicConverter` function with any of the following variants:
 
 * `diyOnicConverter()` - Defaults to the `body` element
