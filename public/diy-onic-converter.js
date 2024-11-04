@@ -1,12 +1,17 @@
 // (default) static word limit for bionic formatting
-const BIONIC_WORD_PREFIX_LIMIT = 3;
+let BIONIC_WORD_PREFIX_LIMIT = 3;
 
 /**
  * Function to convert text on a page to a Bionic Reading representation.
  *
- * @param {string} textContentContainerSelector Selector on which to perform the Bionification of text
+ * @param {string} textContentContainerSelector Selector on which to perform the bionification of text
  */
-const diyOnicConverter = (textContentContainerSelector = 'body') => {
+const diyOnicConverter = (
+  textContentContainerSelector = 'body',
+  prefixLimit = BIONIC_WORD_PREFIX_LIMIT
+) => {
+  // update prefix limit to allow for custom value
+  BIONIC_WORD_PREFIX_LIMIT = prefixLimit;
   const container = document.querySelector(textContentContainerSelector);
 
   // if our selector is a single paragraph, we can skip the
