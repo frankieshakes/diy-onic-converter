@@ -27,6 +27,9 @@ const diyOnicConverter = (
   BIONIC_WORD_PREFIX_LIMIT = prefixLimit;
   const container = document.querySelector(textContentContainerSelector);
 
+  // no match, we exit.
+  if (!container) return;
+
   if (originalContent) {
     container.parentNode.replaceChild(originalContent, container);
     originalContent = null;
@@ -34,8 +37,6 @@ const diyOnicConverter = (
   } else {
     originalContent = container.cloneNode(true);
   }
-
-  console.log({ originalContent });
 
   // if our selector is a single paragraph, we can skip the
   // querySelectorAll query below, and just use a single element
