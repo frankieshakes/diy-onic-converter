@@ -30,6 +30,7 @@ const diyOnicConverter = (
   // no match, we exit.
   if (!container) return;
 
+  // clone original content so we can toggle back and forth with ease
   if (originalContent) {
     container.parentNode.replaceChild(originalContent, container);
     originalContent = null;
