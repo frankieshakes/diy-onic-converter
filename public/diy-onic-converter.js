@@ -96,7 +96,7 @@ const bionicifyWord = word => {
   if (word === '') return;
 
   // separate the word into its bionic-formatted variant
-  const leading = `<strong>${word.slice(0, BIONIC_WORD_PREFIX_LIMIT)}</strong>`;
+  const leading = `<b>${word.slice(0, BIONIC_WORD_PREFIX_LIMIT)}</b>`;
   const trailing = word.slice(BIONIC_WORD_PREFIX_LIMIT);
 
   // Bionic-formatted word
