@@ -30,6 +30,10 @@ const diyOnicConverter = (
   // no match, we exit.
   if (!container) return;
 
+  console.log(
+    `Performing bionic reading conversion on \`${textContentContainerSelector}\`...`
+  );
+
   // clone original content so we can toggle back and forth with ease
   if (originalContent) {
     container.parentNode.replaceChild(originalContent, container);
@@ -43,10 +47,6 @@ const diyOnicConverter = (
   // querySelectorAll query below, and just use a single element
   // array of our `container` to loop over.
   const isContainerAParagraph = container.nodeName.toLowerCase() === 'p';
-
-  console.log(
-    `Performing bionic reading conversion on \`${textContentContainerSelector}\`...`
-  );
 
   // Let's find all the paragraph nodes within our container
   // (if it's a non-paragraph); otherwise, we operate directly
