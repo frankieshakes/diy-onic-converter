@@ -1,6 +1,11 @@
-// static word limit for bionic formatting
-const BIONIC_WORD_LIMIT = 3;
+// (default) static word limit for bionic formatting
+const BIONIC_WORD_PREFIX_LIMIT = 3;
 
+/**
+ * Function to convert text on a page to a Bionic Reading representation.
+ *
+ * @param {string} textContentContainerSelector Selector on which to perform the Bionification of text
+ */
 const diyOnicConverter = (textContentContainerSelector = 'body') => {
   const container = document.querySelector(textContentContainerSelector);
 
@@ -9,7 +14,9 @@ const diyOnicConverter = (textContentContainerSelector = 'body') => {
   // array of our `container` to loop over.
   const isContainerAParagraph = container.nodeName.toLowerCase() === 'p';
 
-  console.log('Performing bionic reading conversion on:', container);
+  console.log(
+    `Performing bionic reading conversion on \`${textContentContainerSelector}\`...`
+  );
 
   // Let's find all the paragraph nodes within our container
   // (if it's a non-paragraph); otherwise, we operate directly
@@ -19,20 +26,76 @@ const diyOnicConverter = (textContentContainerSelector = 'body') => {
     : container.querySelectorAll('p');
 
   for (const paragraph of paragraphs) {
-    // Split the paragraph into its separate words, so we
-    // can iterate and perform our bionic formatting.
-    const words = paragraph.innerText.split(' ');
-    const bionicWords = words.map(word => {
-      const leading = `<strong>${word.slice(0, BIONIC_WORD_LIMIT)}</strong>`;
-      const trailing = word.slice(BIONIC_WORD_LIMIT);
-
-      // Bionic-formatted word
-      return `${leading}${trailing}`;
+    // Create a container to hold our newly formatted content
+    const fragment = document.createDocumentFragment();
+    paragraph.childNodes.forEach(child => {
+      fragment.appendChild(processNode(child));
     });
 
-    // Replace the original paragraph with the joined bionicWords
-    paragraph.innerHTML = bionicWords.join(' ');
+    paragraph.innerHTML = '';
+    paragraph.appendChild(fragment);
   }
+};
+
+/**
+ * Recursively process each node within the given node to apply bionic
+ * formatting. Preserves non-text nodes (ie: images and links)
+ *
+ * @param {Node} node The Node to recursively process
+ * @returns {Node} The processed node with bionic formatting aplied to "text" nodes only
+ */
+const processNode = node => {
+  // If we have a simple text node, let's format it to be bionic.
+  if (node.nodeType === Node.TEXT_NODE) {
+    // Replace any additional whitespace with just a single space,
+    // then split the paragraph into separate words, so we can
+    // iterate and perform our bionic formatting.
+    const words = node.textContent.replace(/\s+/g, ' ').split(' ');
+    const bionicWords = words.map(bionicifyWord);
+
+    // create a temporary <template> to hold our formatted content,
+    // so as not to introduce additional tags (ie: span)
+    const template = document.createElement('template');
+    template.innerHTML = bionicWords.join(' ');
+    return template.content;
+  } else if (
+    node.nodeType === Node.ELEMENT_NODE &&
+    (node.nodeName === 'B' || node.nodeName === 'STRONG')
+  ) {
+    // If we're processing a <b> or <strong> node, strip it and process
+    // just its text content.
+    return processNode(document.createTextNode(node.textContent));
+  }
+  // otherwise, we'll clone our node, and recurse over its children
+  else if (node.nodeType === Node.ELEMENT_NODE) {
+    const clone = node.cloneNode(false);
+    Array.from(node.childNodes).forEach(child => {
+      clone.appendChild(processNode(child));
+    });
+
+    return clone;
+  }
+
+  // unprocessed node (neither text, nor an element)
+  return node;
+};
+
+/**
+ * Create a Bionic-formatted word variant
+ *
+ * @param {string} word Word to Bionic-ify
+ * @returns Bionic-formatted representation of `word`
+ */
+const bionicifyWord = word => {
+  // empty string, we exit;
+  if (word === '') return;
+
+  // separate the word into its bionic-formatted variant
+  const leading = `<strong>${word.slice(0, BIONIC_WORD_PREFIX_LIMIT)}</strong>`;
+  const trailing = word.slice(BIONIC_WORD_PREFIX_LIMIT);
+
+  // Bionic-formatted word
+  return `${leading}${trailing}`;
 };
 
 // Allow global access so that this can be executed from the console.
